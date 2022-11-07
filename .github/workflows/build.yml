@@ -1,0 +1,25 @@
+name: Build
+on:
+  schedule:
+    - cron:  '* 0 * * *'
+
+jobs:
+  build:
+    name: Build and push to dockerhub
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+
+    steps:
+      - name: Checkout Dockerfile
+        uses: actions/checkout@v2
+
+      - name: Login to Dockerhub
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+      - name: Build thunderhub peerswap
+        run: docker build . -t vilm3r/thunderhub:peerswap
+
+      - name: Push latest to Dockerhub
+        run: docker push vilm3r/thunderhub:peerswap
