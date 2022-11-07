@@ -3,17 +3,23 @@
 # ---------------
 FROM node:16.15.1-alpine as deps
 
-WORKDIR /app
+WORKDIR /
 
 # Install dependencies neccesary for node-gyp on node alpine
 RUN apk add --update --no-cache \
   libc6-compat \
   python3 \
   make \
-  g++
+  g++ \
+  git
+
+RUN git clone https://github.com/vilm3r/thunderhub.git /app
+
+WORKDIR /app
+
+RUN git checkout feat/peerswap
 
 # Install app dependencies
-COPY package.json package-lock.json ./
 RUN npm ci
 
 # ---------------
@@ -30,10 +36,7 @@ ARG NODE_ENV="production"
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN git clone https://github.com/vilm3r/thunderhub.git as app && cd app && git checkout feat/peerswap
-
-WORKDIR /app
-
+# Build the NestJS and NextJS application
 RUN npm run build:nest
 RUN npm run build:next
 
