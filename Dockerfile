@@ -30,11 +30,9 @@ ARG NODE_ENV="production"
 ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN git clone https://github.com/vilm3r/thunderhub.git as app && cd app && git checkout feat/peerswap
+
 WORKDIR /app
-
-RUN git clone https://github.com/vilm3r/thunderhub.git && cd thunderhub && git checkout feat/peerswap
-
-WORKDIR /app/thunderhub
 
 RUN npm run build:nest
 RUN npm run build:next
